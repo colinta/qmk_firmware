@@ -191,34 +191,15 @@ static uint16_t scs_timer[2] = {0, 0};
 static bool grave_esc_was_shifted = false;
 
 bool process_record_quantum(keyrecord_t *record) {
+  uint16_t keycode = get_record_keycode(record);
 
-  /* This gets the keycode from the key pressed */
-  keypos_t key = record->event.key;
-  uint16_t keycode;
-
-  #if !defined(NO_ACTION_LAYER) && !defined(STRICT_LAYER_RELEASE)
-    /* TODO: Use store_or_get_action() or a similar function. */
-    if (!disable_action_cache) {
-      uint8_t layer;
-
-      if (record->event.pressed) {
-        layer = layer_switch_get_layer(key);
-        update_source_layers_cache(key, layer);
-      } else {
-        layer = read_source_layers_cache(key);
-      }
-      keycode = keymap_key_to_keycode(layer, key);
-    } else
-  #endif
-    keycode = keymap_key_to_keycode(layer_switch_get_layer(key), key);
-
-    // This is how you use actions here
-    // if (keycode == KC_LEAD) {
-    //   action_t action;
-    //   action.code = ACTION_DEFAULT_LAYER_SET(0);
-    //   process_action(record, action);
-    //   return false;
-    // }
+  // This is how you use actions here
+  // if (keycode == KC_LEAD) {
+  //   action_t action;
+  //   action.code = ACTION_DEFAULT_LAYER_SET(0);
+  //   process_action(record, action);
+  //   return false;
+  // }
 
   #ifdef TAP_DANCE_ENABLE
     preprocess_tap_dance(keycode, record);
@@ -772,6 +753,28 @@ bool process_record_quantum(keyrecord_t *record) {
   }
 
   return process_action_kb(record);
+}
+
+uint16_t get_record_keycode(keyrecord_t *record) {
+  /* This gets the keycode from the key pressed */
+  keypos_t key = record->event.key;
+  uint16_t keycode;
+
+  #if !defined(NO_ACTION_LAYER) && !defined(STRICT_LAYER_RELEASE)
+    /* TODO: Use store_or_get_action() or a similar function. */
+    if (!disable_action_cache) {
+      uint8_t layer;
+
+      if (record->event.pressed) {
+        layer = layer_switch_get_layer(key);
+        update_source_layers_cache(key, layer);
+      } else {
+        layer = read_source_layers_cache(key);
+      }
+      return keymap_key_to_keycode(layer, key);
+    } else
+  #endif
+    return keymap_key_to_keycode(layer_switch_get_layer(key), key);
 }
 
 __attribute__ ((weak))
