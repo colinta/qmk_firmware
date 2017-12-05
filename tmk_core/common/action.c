@@ -173,9 +173,12 @@ void process_record(keyrecord_t *record)
 {
     if (IS_NOEVENT(record->event)) { return; }
 
-    if(!process_record_quantum(record))
-        return;
+    if(process_record_quantum(record)) {
+        process_record_system(record);
+    }
+}
 
+void process_record_system(keyrecord_t *record) {
     action_t action = store_or_get_action(record->event.pressed, record->event.key);
     dprint("ACTION: "); debug_action(action);
 #ifndef NO_ACTION_LAYER

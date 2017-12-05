@@ -85,6 +85,7 @@ void process_hand_swap(keyevent_t *record);
 
 void process_record_nocache(keyrecord_t *record);
 void process_record(keyrecord_t *record);
+void process_record_system(keyrecord_t *record);
 void process_action(keyrecord_t *record, action_t action);
 void register_code(uint8_t code);
 void unregister_code(uint8_t code);
