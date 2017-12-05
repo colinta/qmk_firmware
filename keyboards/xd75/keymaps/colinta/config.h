@@ -20,9 +20,10 @@
 #include "../../config.h"
 
 // QMK customization:
-// - after 1.5s, turn off one-shot keys
-#define ONESHOT_TIMEOUT 1500
 // - TT(layer) only needs one press
 #define TAPPING_TOGGLE 1
+// - Disable features:
+#undef RGBLIGHT_ANIMATIONS
+#define NO_ACTION_ONESHOT
 
 #endif
