@@ -53,19 +53,23 @@
 #define LAYOUT_ortho_5x15 KEYMAP
 
 void capslock_led_init(void);
-void capslock_led_off(void);
-void capslock_led_on(void);
+void capslock_led_set(bool status);
+#define capslock_led_off() (capslock_led_set(false))
+#define capslock_led_on() (capslock_led_set(true))
 
 void gp100_led_init(void);
-void gp100_led_off(void);
-void gp100_led_on(void);
+void gp100_led_set(bool status);
+#define gp100_led_off() (gp100_led_set(false))
+#define gp100_led_on() (gp100_led_set(true))
 
 void gp103_led_init(void);
-void gp103_led_off(void);
-void gp103_led_on(void);
+void gp103_led_set(bool status);
+#define gp103_led_off() (gp103_led_set(false))
+#define gp103_led_on() (gp103_led_set(true))
 
 void keycaps_led_init(void);
-void keycaps_led_off(void);
-void keycaps_led_on(void);
+void keycaps_led_set(bool status);
+#define keycaps_led_off() (keycaps_led_set(false))
+#define keycaps_led_on() (keycaps_led_set(true))
 
 #endif

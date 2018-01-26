@@ -57,12 +57,13 @@ void capslock_led_init(void) {
 	capslock_led_off();
 }
 
-void capslock_led_off(void) {
-	PORTB |= (1 << XD75_CAPSLOCK_LED);
-}
-
-void capslock_led_on(void) {
-	PORTB &= ~(1 << XD75_CAPSLOCK_LED);
+void capslock_led_set(bool status) {
+    if (status) {
+        PORTB &= ~(1 << XD75_CAPSLOCK_LED);
+    }
+    else {
+        PORTB |= (1 << XD75_CAPSLOCK_LED);
+    }
 }
 
 void gp100_led_init(void) {
@@ -70,12 +71,13 @@ void gp100_led_init(void) {
 	gp100_led_off();
 }
 
-void gp100_led_off(void) {
-	PORTF |= (1 << XD75_GP100_LED);
-}
-
-void gp100_led_on(void) {
-	PORTF &= ~(1 << XD75_GP100_LED);
+void gp100_led_set(bool status) {
+    if (status) {
+        PORTF &= ~(1 << XD75_GP100_LED);
+    }
+    else {
+        PORTF |= (1 << XD75_GP100_LED);
+    }
 }
 
 void gp103_led_init(void) {
@@ -83,12 +85,13 @@ void gp103_led_init(void) {
 	gp103_led_off();
 }
 
-void gp103_led_off(void) {
-	PORTF &= ~(1 << XD75_GP103_LED);
-}
-
-void gp103_led_on(void) {
-	PORTF |= (1 << XD75_GP103_LED);
+void gp103_led_set(bool status) {
+    if (status) {
+        PORTF |= (1 << XD75_GP103_LED);
+    }
+    else {
+        PORTF &= ~(1 << XD75_GP103_LED);
+    }
 }
 
 void keycaps_led_init(void) {
@@ -96,10 +99,11 @@ void keycaps_led_init(void) {
 	keycaps_led_off();
 }
 
-void keycaps_led_off(void) {
-	PORTF |= (1 << XD75_KEYCAPS_LED);
-}
-
-void keycaps_led_on(void) {
-	PORTF &= ~(1 << XD75_KEYCAPS_LED);
+void keycaps_led_set(bool status) {
+    if (status) {
+        PORTF &= ~(1 << XD75_KEYCAPS_LED);
+    }
+    else {
+        PORTF |= (1 << XD75_KEYCAPS_LED);
+    }
 }
