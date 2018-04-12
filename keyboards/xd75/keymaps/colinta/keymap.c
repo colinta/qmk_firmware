@@ -64,6 +64,7 @@ enum my_keycodes {
     MM_3,
     MM_4,
     MM_5,
+    MM_6,
 };
 
 #define TH_EVENTS_COUNT 13
@@ -134,7 +135,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [LAYER_FN] = KEYMAP(
      KC_SLEP, RESET  , KC_F1  , KC_F2  , KC_F3  , KC_F4  ,  KC_F5 ,  ___   , KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 ,
       ___   ,  ___   , GOTO_QW, MM_2   ,  ___   ,  ___   ,  ___   ,  ___   , MM_1   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,
-      ___   , KC_LSFT,  ___   ,  ___   , MM_5   , MM_4   , KC_MRWD, ENT_SET, KC_MFFD, MM_3   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,
+      ___   , KC_LSFT,  ___   ,  ___   , MM_5   , MM_4   , KC_MRWD, ENT_SET, KC_MFFD, MM_3   , MM_6   ,  ___   ,  ___   ,  ___   ,  ___   ,
       ___   , KC_LCTL,  ___   ,  ___   , GOTO_CM,  ___   , KC_VOLD, GOTO_FN, KC_VOLU,  ___   ,  ___   ,  ___   ,  ___   ,  ___   , BKLT   ,
       ___   ,  ___   ,  ___   , KC_LALT,  ___   , KC_LGUI,  ___   ,  ___   , GOTO_LK,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___
   ),
@@ -556,6 +557,9 @@ bool process_record_user_macro(uint16_t keycode, keyrecord_t *record) {
     }
     else if (keycode == MM_5) {
         SEND_STRING(SENDSTRING_MM5);
+    }
+    else if (keycode == MM_6) {
+        SEND_STRING(SENDSTRING_MM6);
     }
     else {
         return KBD_CONTINUE;
