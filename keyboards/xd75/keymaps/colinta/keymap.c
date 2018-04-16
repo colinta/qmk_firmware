@@ -120,9 +120,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* FN LAYER - change layouts, media keys, function keys, reset
  * .--------------------------------------------------------------------------------------------------------------------------------------.
- * | KC_SLEP| RESET  |   F1   |   F2   |   F3   |   F4   |   F5   |        |   F6   |   F7   |   F8   |   F9   |   F10  |   F11  |   F12  |
+ * | KC_SLEP|        |   F1   |   F2   |   F3   |   F4   |   F5   |        |   F6   |   F7   |   F8   |   F9   |   F10  |   F11  |   F12  |
  * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+-----------------|
- * |        |        | QWERTY | MM_2   |        |        |        |        | MM_1   |        |        |        |        |        |        |
+ * |        |        | QWERTY | MM_2   |        |        |        | RESET  | MM_1   |        |        |        |        |        |        |
  * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+-----------------+--------|
  * |        |        |        |        | MM_5   | MM_4   |        | RESET  |        | MM_3   |        |        |        |        |        |
  * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------------------------+--------|
@@ -133,8 +133,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 
   [LAYER_FN] = KEYMAP(
-     KC_SLEP, RESET  , KC_F1  , KC_F2  , KC_F3  , KC_F4  ,  KC_F5 ,  ___   , KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 ,
-      ___   ,  ___   , GOTO_QW, MM_2   ,  ___   ,  ___   ,  ___   ,  ___   , MM_1   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,
+     KC_SLEP,  ___   , KC_F1  , KC_F2  , KC_F3  , KC_F4  ,  KC_F5 ,  ___   , KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 ,
+      ___   ,  ___   , GOTO_QW, MM_2   ,  ___   ,  ___   ,  ___   , RESET  , MM_1   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,
       ___   , KC_LSFT,  ___   ,  ___   , MM_5   , MM_4   , KC_MRWD, ENT_SET, KC_MFFD, MM_3   , MM_6   ,  ___   ,  ___   ,  ___   ,  ___   ,
       ___   , KC_LCTL,  ___   ,  ___   , GOTO_CM,  ___   , KC_VOLD, GOTO_FN, KC_VOLU,  ___   ,  ___   ,  ___   ,  ___   ,  ___   , BKLT   ,
       ___   ,  ___   ,  ___   , KC_LALT,  ___   , KC_LGUI,  ___   ,  ___   , GOTO_LK,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___
@@ -216,6 +216,12 @@ static uint8_t mods_down_state = 0;
 
 /// FN layer
 static bool bounce_fn_layer = false;
+
+/// macro (press twice to activate macro)
+static uint8_t macro = 0;
+
+/// reset (press twice to reset)
+static bool reset = false;
 
 /// BABY PROOF
 static uint8_t babycode = 0;
@@ -320,9 +326,17 @@ bool process_record_user_rgb(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_user_reset(uint16_t keycode, keyrecord_t *record) {
-    if (keycode != ENT_SET && keycode != RESET) { return KBD_CONTINUE; }
+    if (keycode != ENT_SET && keycode != RESET) {
+        reset = false;
+        return KBD_CONTINUE;
+    }
 
     if (record->event.pressed) {
+        if (!reset) {
+            reset = true;
+            return KBD_HALT;
+        }
+
         rgblight_setrgb(0xFF, 0xFF, 0);
         gp103_led_on();
         if (keycode == ENT_SET) {
@@ -543,29 +557,44 @@ bool process_record_user_sticky(uint16_t keycode, keyrecord_t *record) {
 bool process_record_user_macro(uint16_t keycode, keyrecord_t *record) {
     if (!record->event.pressed) { return KBD_CONTINUE; }
 
+    uint8_t send;
+    char macro_str[100];
     if (keycode == MM_1) {
-        SEND_STRING(SENDSTRING_MM1);
+        send = 1;
+        strcpy(macro_str, SENDSTRING_MM1);
     }
     else if (keycode == MM_2) {
-        SEND_STRING(SENDSTRING_MM2);
+        send = 2;
+        strcpy(macro_str, SENDSTRING_MM2);
     }
     else if (keycode == MM_3) {
-        SEND_STRING(SENDSTRING_MM3);
+        send = 3;
+        strcpy(macro_str, SENDSTRING_MM3);
     }
     else if (keycode == MM_4) {
-        SEND_STRING(SENDSTRING_MM4);
+        send = 4;
+        strcpy(macro_str, SENDSTRING_MM4);
     }
     else if (keycode == MM_5) {
-        SEND_STRING(SENDSTRING_MM5);
+        send = 5;
+        strcpy(macro_str, SENDSTRING_MM5);
     }
     else if (keycode == MM_6) {
-        SEND_STRING(SENDSTRING_MM6);
+        send = 6;
+        strcpy(macro_str, SENDSTRING_MM6);
     }
     else {
         return KBD_CONTINUE;
     }
 
-    layer_state_set(prev_layer_state);
+    if (send == macro) {
+        send_string(macro_str);
+        layer_state_set(prev_layer_state);
+        macro = 0;
+    }
+    else {
+        macro = send;
+    }
     return KBD_HALT;
 }
 
