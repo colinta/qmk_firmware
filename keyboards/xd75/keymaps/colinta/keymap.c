@@ -436,6 +436,8 @@ bool process_record_user_fnlayer(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_user_taphold(uint16_t keycode, keyrecord_t *record) {
+    if (keycode == TH_PLAY && current_mods() != 0)  return KBD_HALT;
+
     if (record->event.pressed) {
         scan_tap_hold(TAPPED);
     }
