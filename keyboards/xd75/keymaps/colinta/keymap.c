@@ -353,14 +353,22 @@ bool process_record_user_sleep(uint16_t keycode, keyrecord_t *record) {
     if (keycode != KC_SLEP) { return KBD_CONTINUE; }
     if (!record->event.pressed) { return KBD_HALT; }
 
+    uint8_t ctrl_super = MOD_BIT(KC_LCTL) | MOD_BIT(KC_LGUI);
     uint8_t ctrl_shift = MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSHIFT);
     uint8_t prev_mods = current_mods();
     sticky_state = 0;
     sticky_lock = 0;
+
+    mods_down_state = ctrl_super;
+    update_mods(prev_mods);
+    register_code(KC_Q);
+    unregister_code(KC_Q);
+
     mods_down_state = ctrl_shift;
     update_mods(prev_mods);
     register_code(KC_POWER);
     unregister_code(KC_POWER);
+
     mods_down_state = 0;
     update_mods(ctrl_shift);
 
