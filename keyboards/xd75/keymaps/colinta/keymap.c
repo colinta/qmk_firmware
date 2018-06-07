@@ -195,6 +195,12 @@ static taphold_t th_events[] = {
 static rgblight_fadeout lights[RGBLED_NUM];
 static bool rgb_animations = true;
 
+/// DEBOUNCING
+/// My keyboard has "double tap" issues, this timer prevents printable keys from
+/// registering twice within a small threshold
+static uint16_t debounce_timer = 0;
+static uint16_t debounce_last_key = 0;
+
 /// STICKY KEYS
 // sticky key state - bit masks of MOD_BIT(KC_LCTL) | MOD_BIT(KC_LALT) | ...
 // sticky_lock - same but stays on - double tap to activate
@@ -297,6 +303,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     result = process_record_user_rgb(keycode, record)         && result;
     result = process_record_user_sleep(keycode, record)       && result;
     result = process_record_user_reset(keycode, record)       && result;
+    result = process_record_user_debounce(keycode, record)    && result;
     result = process_record_user_goto_layer(keycode, record)  && result;
     result = process_record_user_fnlayer(keycode, record)     && result;
     result = process_record_user_taphold(keycode, record)     && result;  // taphold must be BEFORE sticky
@@ -347,6 +354,29 @@ bool process_record_user_reset(uint16_t keycode, keyrecord_t *record) {
     }
 
     return KBD_HALT;
+}
+
+bool process_record_user_debounce(uint16_t keycode, keyrecord_t *record) {
+    uint16_t last_key = debounce_last_key;
+    debounce_last_key = keycode;
+
+    switch (keycode) {
+    case KC_A ... KC_SLASH:
+        if (keycode != last_key) {
+            return KBD_CONTINUE;
+        }
+        break;
+    default:
+        return KBD_CONTINUE;
+    }
+
+    if (timer_elapsed(debounce_timer) < DEBOUNCE_THRESHOLD) {
+        return KBD_HALT;
+    }
+    else {
+        debounce_timer = timer_read();
+        return KBD_CONTINUE;
+    }
 }
 
 bool process_record_user_sleep(uint16_t keycode, keyrecord_t *record) {

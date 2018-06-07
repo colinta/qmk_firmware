@@ -55,6 +55,9 @@
 #define REC2 DYN_REC_START2
 #define STOP DYN_REC_STOP
 
+// debounce settings
+#define DEBOUNCE_THRESHOLD 10
+
 // sticky settings
 #define STICKY_LOCK_DELAY 400
 #define STICKY_AUTO_OFF 500
@@ -91,6 +94,7 @@ void scan_tap_hold(taphold_state state);
 void scan_rgblight_fadeout(void);
 void scan_sticky_auto_off(void);
 
+bool process_record_user_debounce(uint16_t keycode, keyrecord_t *record);
 bool process_record_user_sleep(uint16_t keycode, keyrecord_t *record);
 bool process_record_user_reset(uint16_t keycode, keyrecord_t *record);
 bool process_record_user_rgb(uint16_t keycode, keyrecord_t *record);
