@@ -749,21 +749,6 @@ void set_current_mods(uint8_t prev_mods, uint8_t current_mods) {
     }
 
     set_mods(current_mods);
-
-    bool hyper = hyper_state || hyper_down;
-    if ((sticky_lock || turned_off) && !hyper) {
-        gp100_led_on();
-    }
-    else {
-        gp100_led_off();
-    }
-
-    if (sticky_state || sticky_lock || hyper_state) {
-        capslock_led_on();
-    }
-    else {
-        capslock_led_off();
-    }
 }
 
 void process_record_after(keyrecord_t *record) {
