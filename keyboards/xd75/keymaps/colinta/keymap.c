@@ -732,14 +732,9 @@ void update_mods(uint8_t prev_mods) {
 
 void set_current_mods(uint8_t prev_mods, uint8_t current_mods) {
     uint8_t mods[] = { KC_LCTL, KC_LALT, KC_LGUI, KC_LSHIFT };
-    bool turned_off = false;
     for (uint8_t mod_index = 0; mod_index < 4; mod_index++ ) {
         uint8_t mod = mods[mod_index];
         uint8_t mask = MOD_BIT(mod);
-
-        if ((mods_down_state & mask) && !((sticky_state | sticky_lock) & mask)) {
-            turned_off = true;
-        }
 
         if ( (prev_mods & mask) == (current_mods & mask)) {
             continue;
