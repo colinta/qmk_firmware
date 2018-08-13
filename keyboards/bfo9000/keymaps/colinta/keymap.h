@@ -24,7 +24,7 @@
 
 // sticky settings
 #define STICKY_LOCK_DELAY 200
-#define STICKY_AUTO_OFF 100
+#define STICKY_AUTO_OFF 250
 
 // tap-hold settings
 #define LONGPRESS_DELAY 250
