@@ -1,18 +1,3 @@
-/* Copyright 2017 Colin T.A. Gray
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 #include "xd75.h"
 #include "rgblight.h"
 #include <util/delay.h>
@@ -70,6 +55,7 @@ enum my_keycodes {
 #define TH_EVENTS_COUNT 13
 #define TH_FIRST TH_PLAY
 #define TH_LAST TH_0
+#define MM_LAST MM_6
 #define GOTO_LK LK_ANY
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -90,10 +76,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [LAYER_COLEMAK] = KEYMAP(
      KC_ESC , KC_GRV , TH_1   , TH_2   , TH_3   , TH_4   , TH_5   , KC_DEL , TH_6   , TH_7   , TH_8   , TH_9   , TH_0   , KC_MINS, KC_EQL ,
-      ___   , KC_TAB , KC_Q   , KC_W   , KC_F   , KC_P   , KC_G   , KC_BSPC, KC_J   , KC_L   , KC_U   , KC_Y   , KC_SCLN, KC_LBRC, KC_RBRC,
-      ___   ,STK_SHFT, KC_A   , KC_R   , KC_S   , KC_T   , KC_D   , KC_ENT , KC_H   , KC_N   , KC_E   , KC_I   , KC_O   , KC_QUOT, KC_BSLS,
-      ___   , STK_CTL, KC_Z   , KC_X   , KC_C   , KC_V   , KC_B   , GOTO_FN, KC_K   , KC_M   , KC_COMM, KC_DOT , KC_SLSH, KC_UP  , HYPER  ,
-      ___   , TH_PLAY,  ___   , STK_ALT,  ___   , STK_GUI,  ___   ,  ___   , KC_SPC  ,  ___   , TH_PGUP, TH_PGDN, KC_LEFT, KC_DOWN, KC_RGHT
+       __   , KC_TAB , KC_Q   , KC_W   , KC_F   , KC_P   , KC_G   , KC_BSPC, KC_J   , KC_L   , KC_U   , KC_Y   , KC_SCLN, KC_LBRC, KC_RBRC,
+       __   ,STK_SHFT, KC_A   , KC_R   , KC_S   , KC_T   , KC_D   , KC_ENT , KC_H   , KC_N   , KC_E   , KC_I   , KC_O   , KC_QUOT, KC_BSLS,
+       __   , STK_CTL, KC_Z   , KC_X   , KC_C   , KC_V   , KC_B   , GOTO_FN, KC_K   , KC_M   , KC_COMM, KC_DOT , KC_SLSH, KC_UP  , HYPER  ,
+       __   , TH_PLAY,   __   , STK_ALT,   __   , STK_GUI,   __   ,   __   , KC_SPC  ,   __   , TH_PGUP, TH_PGDN, KC_LEFT, KC_DOWN, KC_RGHT
   ),
 
 /* QWERTY - Falls through to colemak for function keys, doesn't use sticky keys
@@ -133,11 +119,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 
   [LAYER_FN] = KEYMAP(
-     KC_SLEP,  ___   , KC_F1  , KC_F2  , KC_F3  , KC_F4  ,  KC_F5 ,  ___   , KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 ,
-      ___   ,  ___   , GOTO_QW, MM_2   ,  ___   ,  ___   ,  ___   , RESET  , MM_1   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,
-      ___   , KC_LSFT,  ___   ,  ___   , MM_5   , MM_4   , KC_MRWD, ENT_SET, KC_MFFD, MM_3   , MM_6   ,  ___   ,  ___   ,  ___   ,  ___   ,
-      ___   , KC_LCTL,  ___   ,  ___   , GOTO_CM,  ___   , KC_VOLD, GOTO_FN, KC_VOLU,  ___   ,  ___   ,  ___   ,  ___   ,  ___   , BKLT   ,
-      ___   ,  ___   ,  ___   , KC_LALT,  ___   , KC_LGUI,  ___   ,  ___   , GOTO_LK,  ___   ,  ___   ,  ___   ,  ___   ,  ___   ,  ___
+     KC_SLEP,   __   , KC_F1  , KC_F2  , KC_F3  , KC_F4  ,  KC_F5 ,   __   , KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 ,
+       __   ,   __   , GOTO_QW, MM_2   ,   __   ,   __   ,   __   , RESET  , MM_1   ,   __   ,   __   ,   __   ,   __   ,   __   ,   __   ,
+       __   , KC_LSFT,   __   ,   __   , MM_5   , MM_4   , KC_MRWD, ENT_SET, KC_MFFD, MM_3   , MM_6   ,   __   ,   __   ,   __   ,   __   ,
+       __   , KC_LCTL,   __   ,   __   , GOTO_CM,   __   , KC_VOLD, GOTO_FN, KC_VOLU,   __   ,   __   ,   __   ,   __   ,   __   , BKLT   ,
+       __   ,   __   ,   __   , KC_LALT,   __   , KC_LGUI,   __   ,   __   , GOTO_LK,   __   ,   __   ,   __   ,   __   ,   __   ,   __
   ),
 
 /* LOCK LAYER - baby proof layer, press keys 1/2/3 in order to unlock
@@ -159,7 +145,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY ,
      LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY ,
      LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY ,  LK_2  , LK_ANY ,  LK_1  , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY ,
-     LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY ,  ___   ,  LK_3  ,  ___   , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY
+     LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY ,   __   ,  LK_3  ,   __   , LK_ANY , LK_ANY , LK_ANY , LK_ANY , LK_ANY
      )
 };
 
@@ -195,12 +181,6 @@ static taphold_t th_events[] = {
 static rgblight_fadeout lights[RGBLED_NUM];
 static bool rgb_animations = true;
 
-/// DEBOUNCING
-/// My keyboard has "double tap" issues, this timer prevents printable keys from
-/// registering twice within a small threshold
-static uint16_t debounce_timer = 0;
-static uint16_t debounce_last_key = 0;
-
 /// STICKY KEYS
 // sticky key state - bit masks of MOD_BIT(KC_LCTL) | MOD_BIT(KC_LALT) | ...
 // sticky_lock - same but stays on - double tap to activate
@@ -224,7 +204,7 @@ static uint8_t mods_down_state = 0;
 static bool bounce_fn_layer = false;
 
 /// macro (press twice to activate macro)
-static uint8_t macro = 0;
+static uint16_t macro = 0;
 
 /// reset (press twice to reset)
 static bool reset = false;
@@ -260,6 +240,37 @@ void matrix_scan_user(void) {
     scan_sticky_auto_off();
 }
 
+void scan_tap_hold(taphold_state state) {
+    bool any_activated = false;
+    uint8_t original_mods = current_mods();
+    uint8_t prev_mods = original_mods;
+    for (uint8_t index = 0 ; index < TH_EVENTS_COUNT ; ++index ) {
+        taphold_t *th_event = &th_events[index];
+        if (!th_event->is_pressed) { continue; }
+
+        if (state == TAPPED || timer_elapsed(th_event->timer) > LONGPRESS_DELAY) {
+            uint16_t code = state == HELD ? th_event->kc_hold : th_event->kc_tap;
+            bool should_update_mods = state == TAPPED && prev_mods != th_event->mods;
+            if (should_update_mods) {
+                set_current_mods(prev_mods, th_event->mods);
+                prev_mods = th_event->mods;
+            }
+            register_code(code);
+            unregister_code(code);
+            th_event->is_pressed = false;
+            any_activated = true;
+        }
+    }
+
+    if (prev_mods != original_mods) {
+        set_current_mods(prev_mods, original_mods);
+    }
+
+    if (any_activated) {
+        process_record_after_sticky_clear();
+    }
+}
+
 void scan_rgblight_fadeout(void) {
     if (!(rgb_animations && backlight_on)) { return; }
 
@@ -290,9 +301,7 @@ void scan_rgblight_fadeout(void) {
 
 void scan_sticky_auto_off(void) {
     if (sticky_auto_off_timer && timer_elapsed(sticky_auto_off_timer) > STICKY_AUTO_OFF) {
-        uint8_t prev_mods = current_mods();
-        sticky_state = 0;
-        update_mods(prev_mods);
+        clear_sticky_mods();
         sticky_auto_off_timer = 0;
     }
 }
@@ -303,7 +312,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     result = process_record_user_rgb(keycode, record)         && result;
     result = process_record_user_sleep(keycode, record)       && result;
     result = process_record_user_reset(keycode, record)       && result;
-    result = process_record_user_debounce(keycode, record)    && result;
     result = process_record_user_goto_layer(keycode, record)  && result;
     result = process_record_user_fnlayer(keycode, record)     && result;
     result = process_record_user_taphold(keycode, record)     && result;  // taphold must be BEFORE sticky
@@ -354,29 +362,6 @@ bool process_record_user_reset(uint16_t keycode, keyrecord_t *record) {
     }
 
     return KBD_HALT;
-}
-
-bool process_record_user_debounce(uint16_t keycode, keyrecord_t *record) {
-    uint16_t last_key = debounce_last_key;
-    debounce_last_key = keycode;
-
-    switch (keycode) {
-    case KC_A ... KC_SLASH:
-        if (keycode != last_key) {
-            return KBD_CONTINUE;
-        }
-        break;
-    default:
-        return KBD_CONTINUE;
-    }
-
-    if (timer_elapsed(debounce_timer) < DEBOUNCE_THRESHOLD) {
-        return KBD_HALT;
-    }
-    else {
-        debounce_timer = timer_read();
-        return KBD_CONTINUE;
-    }
 }
 
 bool process_record_user_sleep(uint16_t keycode, keyrecord_t *record) {
@@ -432,13 +417,6 @@ bool process_record_user_fnlayer(uint16_t keycode, keyrecord_t *record) {
     }
 
     if (sticky_state || sticky_lock || hyper_state) {
-        if (!record->event.pressed) {
-            uint8_t prev_mods = current_mods();
-            sticky_state = 0;
-            sticky_lock = 0;
-            hyper_state = false;
-            update_mods(prev_mods);
-        }
         return KBD_HALT;
     }
 
@@ -496,35 +474,44 @@ bool process_record_user_taphold(uint16_t keycode, keyrecord_t *record) {
     return KBD_HALT;
 }
 
-void scan_tap_hold(taphold_state state) {
-    bool any_activated = false;
-    uint8_t original_mods = current_mods();
-    uint8_t prev_mods = original_mods;
-    for (uint8_t index = 0 ; index < TH_EVENTS_COUNT ; ++index ) {
-        taphold_t *th_event = &th_events[index];
-        if (!th_event->is_pressed) { continue; }
+uint8_t current_mods(void) {
+    if (hyper_state || hyper_down) {
+        return MOD_BIT(KC_LCTL) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LGUI);
+    }
+    return mods_down_state | sticky_state | sticky_lock;
+}
 
-        if (state == TAPPED || timer_elapsed(th_event->timer) > LONGPRESS_DELAY) {
-            uint16_t code = state == HELD ? th_event->kc_hold : th_event->kc_tap;
-            bool should_update_mods = state == TAPPED && prev_mods != th_event->mods;
-            if (should_update_mods) {
-                set_current_mods(prev_mods, th_event->mods);
-                prev_mods = th_event->mods;
-            }
-            register_code(code);
-            unregister_code(code);
-            th_event->is_pressed = false;
-            any_activated = true;
+void update_mods(uint8_t prev_mods) {
+    set_current_mods(prev_mods, current_mods());
+}
+
+void set_current_mods(uint8_t prev_mods, uint8_t current_mods) {
+    uint8_t mods[] = { KC_LCTL, KC_LALT, KC_LGUI, KC_LSHIFT };
+    for (uint8_t mod_index = 0; mod_index < 4; mod_index++ ) {
+        uint8_t mod = mods[mod_index];
+        uint8_t mask = MOD_BIT(mod);
+
+        if ( (prev_mods & mask) == (current_mods & mask)) {
+            continue;
+        }
+
+        if (prev_mods & mask) {
+            unregister_code(mod);
+        }
+        else {
+            register_code(mod);
         }
     }
 
-    if (prev_mods != original_mods) {
-        set_current_mods(prev_mods, original_mods);
-    }
+    set_mods(current_mods);
+}
 
-    if (any_activated) {
-        process_record_after_sticky_clear();
-    }
+void clear_sticky_mods(void) {
+    uint8_t prev_mods = current_mods();
+    sticky_state = 0;
+    sticky_lock = 0;
+    hyper_state = false;
+    update_mods(prev_mods);
 }
 
 bool process_record_user_sticky(uint16_t keycode, keyrecord_t *record) {
@@ -548,6 +535,8 @@ bool process_record_user_sticky(uint16_t keycode, keyrecord_t *record) {
         break;
     case HYPER:
         if (record->event.pressed) {
+            sticky_state = 0;
+            sticky_lock = 0;
             hyper_state = !hyper_state;
         }
         hyper_down = record->event.pressed;
@@ -595,46 +584,41 @@ bool process_record_user_sticky(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_user_macro(uint16_t keycode, keyrecord_t *record) {
-    if (!record->event.pressed) { return KBD_CONTINUE; }
-
-    uint8_t send;
-    char macro_str[100];
-    if (keycode == MM_1) {
-        send = 1;
-        strcpy(macro_str, SENDSTRING_MM1);
-    }
-    else if (keycode == MM_2) {
-        send = 2;
-        strcpy(macro_str, SENDSTRING_MM2);
-    }
-    else if (keycode == MM_3) {
-        send = 3;
-        strcpy(macro_str, SENDSTRING_MM3);
-    }
-    else if (keycode == MM_4) {
-        send = 4;
-        strcpy(macro_str, SENDSTRING_MM4);
-    }
-    else if (keycode == MM_5) {
-        send = 5;
-        strcpy(macro_str, SENDSTRING_MM5);
-    }
-    else if (keycode == MM_6) {
-        send = 6;
-        strcpy(macro_str, SENDSTRING_MM6);
-    }
-    else {
+    if (keycode < MM_1 || keycode > MM_LAST) {
+        macro = 0;
         return KBD_CONTINUE;
     }
+    if (!record->event.pressed) { return KBD_CONTINUE; }
 
-    if (send == macro) {
-        send_string(macro_str);
+    if (macro == keycode) {
+        switch (macro) {
+        case MM_1:
+            send_string(SENDSTRING_MM1);
+            break;
+        case MM_2:
+            send_string(SENDSTRING_MM2);
+            break;
+        case MM_3:
+            send_string(SENDSTRING_MM3);
+            break;
+        case MM_4:
+            send_string(SENDSTRING_MM4);
+            break;
+        case MM_5:
+            send_string(SENDSTRING_MM5);
+            break;
+        case MM_6:
+            send_string(SENDSTRING_MM6);
+            break;
+        }
+
         layer_state_set(prev_layer_state);
         macro = 0;
     }
     else {
-        macro = send;
+        macro = keycode;
     }
+
     return KBD_HALT;
 }
 
@@ -719,38 +703,6 @@ void start_rgb_light(void) {
     rgblight_setrgb_at(light->r, light->g, light->b, light_index);
 }
 
-uint8_t current_mods(void) {
-    if (hyper_state || hyper_down) {
-        return MOD_BIT(KC_LCTL) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LGUI);
-    }
-    return mods_down_state | sticky_state | sticky_lock;
-}
-
-void update_mods(uint8_t prev_mods) {
-    set_current_mods(prev_mods, current_mods());
-}
-
-void set_current_mods(uint8_t prev_mods, uint8_t current_mods) {
-    uint8_t mods[] = { KC_LCTL, KC_LALT, KC_LGUI, KC_LSHIFT };
-    for (uint8_t mod_index = 0; mod_index < 4; mod_index++ ) {
-        uint8_t mod = mods[mod_index];
-        uint8_t mask = MOD_BIT(mod);
-
-        if ( (prev_mods & mask) == (current_mods & mask)) {
-            continue;
-        }
-
-        if (prev_mods & mask) {
-            unregister_code(mod);
-        }
-        else {
-            register_code(mod);
-        }
-    }
-
-    set_mods(current_mods);
-}
-
 void process_record_after(keyrecord_t *record) {
     process_record_after_sticky_clear();
     process_record_after_rgb();
@@ -791,10 +743,7 @@ void process_record_after_sticky_clear(void) {
     }
 
     if (sticky_clear) {
-        uint8_t prev_mods = current_mods();
-        hyper_state = false;
-        sticky_state = 0;
-        update_mods(prev_mods);
+        clear_sticky_mods();
         sticky_clear = false;
     }
 }

@@ -36,6 +36,7 @@
 // - qwerty
 // - record-mode (adds stop buttons)
 // - fn (start recording, change to colemak/qwerty)
+// - lock
 #define LAYER_COLEMAK 0
 #define LAYER_RECORD_CM 1
 #define LAYER_QWERTY 2
@@ -48,19 +49,16 @@
 // "MMENU" is a macro for "CMD+SPC" (aka Spotlight/Alfred)
 #define MMENU LGUI(KC_SPC)
 #define ________ KC_TRNS
-#define ___ KC_NO
+#define __ KC_NO
 #define DM_1 DYN_MACRO_PLAY1
 #define DM_2 DYN_MACRO_PLAY2
 #define REC1 DYN_REC_START1
 #define REC2 DYN_REC_START2
 #define STOP DYN_REC_STOP
 
-// debounce settings
-#define DEBOUNCE_THRESHOLD 10
-
 // sticky settings
-#define STICKY_LOCK_DELAY 400
-#define STICKY_AUTO_OFF 500
+#define STICKY_LOCK_DELAY 200
+#define STICKY_AUTO_OFF 100
 
 // tap-hold settings
 #define LONGPRESS_DELAY 250
@@ -94,7 +92,6 @@ void scan_tap_hold(taphold_state state);
 void scan_rgblight_fadeout(void);
 void scan_sticky_auto_off(void);
 
-bool process_record_user_debounce(uint16_t keycode, keyrecord_t *record);
 bool process_record_user_sleep(uint16_t keycode, keyrecord_t *record);
 bool process_record_user_reset(uint16_t keycode, keyrecord_t *record);
 bool process_record_user_rgb(uint16_t keycode, keyrecord_t *record);
@@ -112,6 +109,7 @@ void process_record_after_rgb(void);
 
 uint8_t current_mods(void);
 void set_current_mods(uint8_t prev_mods, uint8_t current_mods);
+void clear_sticky_mods(void);
 void update_mods(uint8_t prev_mods);
 void start_rgb_light(void);
 void taphold_tapped(uint8_t index, bool pressed);
