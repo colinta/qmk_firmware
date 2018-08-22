@@ -381,8 +381,6 @@ void clear_sticky_mods(void) {
 }
 
 bool process_record_user_sticky(uint16_t keycode, keyrecord_t *record) {
-    if (!layer_state_is(LAYER_COLEMAK)) { return KBD_CONTINUE; }
-
     uint8_t modkey_mask = 0;
     uint8_t prev_mods = current_mods();
 
@@ -406,6 +404,8 @@ bool process_record_user_sticky(uint16_t keycode, keyrecord_t *record) {
         }
         hyper_down = record->event.pressed;
         break;
+    case GOTO_BRK:
+        return KBD_CONTINUE;
     default:
         if ((hyper_state || sticky_state) && record->event.pressed) {
             sticky_clear = true;
