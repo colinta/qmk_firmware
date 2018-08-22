@@ -271,7 +271,6 @@ bool process_record_user_goto_bracket(uint16_t keycode, keyrecord_t *record) {
     if (keycode != GOTO_BRK) { return KBD_CONTINUE; }
 
     if (record->event.pressed) {
-        clear_sticky_mods();
         layer_move(LAYER_BRACKET);
     }
     else {
