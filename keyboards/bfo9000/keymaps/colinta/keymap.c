@@ -53,7 +53,7 @@ enum my_keycodes {
 
 #define TH_EVENTS_COUNT 3
 #define TH_FIRST TH_PLAY
-#define TH_LAST TH_VOLU
+#define TH_LAST TH_VOLD
 #define MM_LAST MM_6
 
 #define LAYER_BASE 0
@@ -61,8 +61,8 @@ enum my_keycodes {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [LAYER_COLEMAK] = LAYOUT( \
-    MM_1 ,   __   , KC_ESC ,  KC_F1 ,  KC_F2 ,  KC_F3 ,  KC_F4 ,  KC_F5 ,  KC_F6      ,      KC_F7 ,  KC_F8 ,  KC_F9 , KC_F10 , KC_F11 , KC_F12 , KC_VOLD, KC_MPLY, KC_VOLU, \
-    MM_2 ,   __   , KC_GRV ,  KC_1  ,  KC_2  ,  KC_3  ,  KC_4  ,  KC_5  , KC_INS      ,     KC_DEL ,  KC_6  ,  KC_7  ,  KC_8  ,  KC_9  ,  KC_0  , KC_MINS, KC_EQL ,   __   , \
+    MM_1 ,   __   , KC_ESC ,  KC_F1 ,  KC_F2 ,  KC_F3 ,  KC_F4 ,  KC_F5 ,  KC_F6      ,      KC_F7 ,  KC_F8 ,  KC_F9 , KC_F10 , KC_F11 , KC_F12 , TH_VOLD, TH_PLAY, TH_VOLU, \
+    MM_2 ,   __   , KC_GRV ,  KC_1  ,  KC_2  ,  KC_3  ,  KC_4  ,  KC_5  , KC_DEL      ,     KC_DEL ,  KC_6  ,  KC_7  ,  KC_8  ,  KC_9  ,  KC_0  , KC_MINS, KC_EQL , KC_MUTE, \
     MM_3 ,   __   , KC_TAB ,  KC_Q  ,  KC_W  ,  KC_F  ,  KC_P  ,  KC_G  , KC_BSPC     ,     KC_BSPC,  KC_J  ,  KC_L  ,  KC_U  ,  KC_Y  , KC_SCLN, KC_LBRC, KC_RBRC, KC_HOME, \
     MM_4 ,   __   ,STK_SHFT,  KC_A  ,  KC_R  ,  KC_S  ,  KC_T  ,  KC_D  , KC_ENT      ,     KC_ENT ,  KC_H  ,  KC_N  ,  KC_E  ,  KC_I  ,  KC_O  , KC_QUOT, KC_PGUP, KC_PGDN, \
     MM_5 ,   __   , STK_CTL,  KC_Z  ,  KC_X  ,  KC_C  ,  KC_V  ,  KC_B  , GOTO_FN     ,     GOTO_FN,  KC_K  ,  KC_M  , KC_COMM, KC_DOT , KC_SLSH, KC_BSLS,  KC_UP , KC_END , \
@@ -73,9 +73,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     __   ,   __   ,   __   ,   __   ,   __   ,   __   ,   __   ,   __   ,   __        ,       __   ,   __   ,   __   ,   __   ,   __   ,   __   ,   __   ,   __   ,   __   , \
     __   ,   __   ,   __   ,   __   , KC_DLR , KC_LPRN, KC_RPRN,   __   ,   __        ,       __   ,   __   , KC_LPRN, KC_RPRN,   __   ,   __   ,   __   ,   __   ,   __   , \
     __   ,   __   ,   __   ,   __   , KC_DLR , KC_LCBR, KC_RCBR,   __   ,   __        ,       __   ,   __   , KC_LCBR, KC_RCBR,   __   ,   __   ,   __   ,   __   ,   __   , \
-    __   ,   __   ,   __   ,   __   , KC_BSLS, KC_LPRN, KC_RPRN,   __   ,   __        ,       __   ,   __   , KC_LBRC, KC_RBRC,   __   ,   __   ,   __   ,   __   ,   __   , \
-    __   ,   __   ,   __   ,   __   , KC_PERC, KC_LCBR, KC_RCBR,   __   ,   __        ,       __   ,   __   , KC_LABK, KC_RABK,   __   ,   __   ,   __   ,   __   ,   __   , \
-    __   ,   __   ,   __   ,   __   ,   __   ,   __   ,   __   ,   __   ,   __        ,       __   ,   __   ,   __   ,GOTO_BRK,   __   ,   __   ,   __   ,   __   ,   __     \
+    __   ,   __   ,STK_SHFT,   __   , KC_BSLS, KC_LPRN, KC_RPRN,   __   ,   __        ,       __   ,   __   , KC_LBRC, KC_RBRC,   __   ,   __   ,   __   ,   __   ,   __   , \
+    __   ,   __   , STK_CTL,   __   , KC_PERC, KC_LCBR, KC_RCBR,   __   ,   __        ,       __   ,   __   , KC_LABK, KC_RABK,   __   ,   __   ,   __   ,   __   ,   __   , \
+    __   ,   __   ,   __   ,  HYPER ,   __   , STK_ALT,   __   , STK_GUI,   __        ,       __   ,   __   ,   __   ,GOTO_BRK,   __   ,   __   ,   __   ,   __   ,   __     \
 ),
 
 [LAYER_FN] = LAYOUT( \
@@ -108,8 +108,8 @@ static uint32_t prev_layer_state = LAYER_COLEMAK;
 /// keys must be sequential and in the same order.
 static taphold_t th_events[] = {
     { .is_pressed = false, .timer = 0, .kc_tap = KC_MPLY, .kc_hold = KC_MUTE }, // TH_PLAY
-    { .is_pressed = false, .timer = 0, .kc_tap = KC_VOLU, .kc_hold = KC_MRWD }, // TH_VOLU
-    { .is_pressed = false, .timer = 0, .kc_tap = KC_VOLD, .kc_hold = KC_MFFD }  // TH_VOLD
+    { .is_pressed = false, .timer = 0, .kc_tap = KC_VOLU, .kc_hold = KC_MFFD }, // TH_VOLU
+    { .is_pressed = false, .timer = 0, .kc_tap = KC_VOLD, .kc_hold = KC_MRWD }  // TH_VOLD
 };
 
 /// STICKY KEYS
