@@ -204,6 +204,7 @@ static bool taphold_down = false;
 // state only lasts for one key press, but as long as the modifier key is held
 // it will also continue to be active.
 static uint8_t mods_down_state = 0;
+static uint8_t prev_mods = 0;
 
 /// FN layer
 static bool bounce_fn_layer = false;
@@ -263,7 +264,7 @@ void scan_tap_hold(taphold_state state) {
             uint16_t code = state == HELD ? th_event->kc_hold : th_event->kc_tap;
             bool should_update_mods = state == TAPPED && prev_mods != th_event->mods;
             if (should_update_mods) {
-                set_current_mods(prev_mods, th_event->mods);
+                set_current_mods(th_event->mods);
                 prev_mods = th_event->mods;
             }
             register_code(code);
@@ -274,7 +275,7 @@ void scan_tap_hold(taphold_state state) {
     }
 
     if (prev_mods != original_mods) {
-        set_current_mods(prev_mods, original_mods);
+        set_current_mods(original_mods);
     }
 
     if (any_activated) {
@@ -387,22 +388,21 @@ bool process_record_user_sleep(uint16_t keycode, keyrecord_t *record) {
 
     uint8_t ctrl_super = MOD_BIT(KC_LCTL) | MOD_BIT(KC_LGUI);
     uint8_t ctrl_shift = MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSHIFT);
-    uint8_t prev_mods = current_mods();
     sticky_state = 0;
     sticky_lock = 0;
 
     mods_down_state = ctrl_super;
-    update_mods(prev_mods);
+    update_mods();
     register_code(KC_Q);
     unregister_code(KC_Q);
 
     mods_down_state = ctrl_shift;
-    update_mods(prev_mods);
+    update_mods();
     register_code(KC_POWER);
     unregister_code(KC_POWER);
 
     mods_down_state = 0;
-    update_mods(ctrl_shift);
+    update_mods();
 
     layer_state_set(prev_layer_state);
 
@@ -500,44 +500,45 @@ uint8_t current_mods(void) {
     return mods_down_state | sticky_state | sticky_lock;
 }
 
-void update_mods(uint8_t prev_mods) {
-    set_current_mods(prev_mods, current_mods());
+void update_mods(void) {
+    set_current_mods(current_mods());
 }
 
-void set_current_mods(uint8_t prev_mods, uint8_t current_mods) {
-    uint8_t mods[] = { KC_LCTL, KC_LALT, KC_LGUI, KC_LSHIFT };
-    for (uint8_t mod_index = 0; mod_index < 4; mod_index++ ) {
-        uint8_t mod = mods[mod_index];
-        uint8_t mask = MOD_BIT(mod);
+void cmp_mod(uint8_t current_mods, uint8_t mod) {
+    uint8_t mask = MOD_BIT(mod);
 
-        if ( (prev_mods & mask) == (current_mods & mask)) {
-            continue;
-        }
-
-        if (prev_mods & mask) {
-            unregister_code(mod);
-        }
-        else {
-            register_code(mod);
-        }
+    if ( (prev_mods & mask) == (current_mods & mask)) {
+        return;
     }
 
+    if (prev_mods & mask) {
+        unregister_code(mod);
+    }
+    else {
+        register_code(mod);
+    }
+}
+
+void set_current_mods(uint8_t current_mods) {
+    cmp_mod(current_mods, KC_LCTL);
+    cmp_mod(current_mods, KC_LALT);
+    cmp_mod(current_mods, KC_LGUI);
+    cmp_mod(current_mods, KC_LSHIFT);
     set_mods(current_mods);
+    prev_mods = current_mods;
 }
 
 void clear_sticky_mods(void) {
-    uint8_t prev_mods = current_mods();
     sticky_state = 0;
     sticky_lock = 0;
     hyper_state = false;
-    update_mods(prev_mods);
+    update_mods();
 }
 
 bool process_record_user_sticky(uint16_t keycode, keyrecord_t *record) {
     if (!layer_state_is(LAYER_COLEMAK)) { return KBD_CONTINUE; }
 
     uint8_t modkey_mask = 0;
-    uint8_t prev_mods = current_mods();
 
     switch (keycode) {
     case STK_CTL:
@@ -598,7 +599,7 @@ bool process_record_user_sticky(uint16_t keycode, keyrecord_t *record) {
         }
     }
 
-    update_mods(prev_mods);
+    update_mods();
     return KBD_HALT;
 }
 

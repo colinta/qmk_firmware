@@ -109,8 +109,8 @@ void process_record_after_sticky_clear(void);
 void process_record_after_rgb(void);
 
 uint8_t current_mods(void);
-void set_current_mods(uint8_t prev_mods, uint8_t current_mods);
+void set_current_mods(uint8_t current_mods);
 void clear_sticky_mods(void);
-void update_mods(uint8_t prev_mods);
+void update_mods(void);
 void start_rgb_light(void);
 void taphold_tapped(uint8_t index, bool pressed);
