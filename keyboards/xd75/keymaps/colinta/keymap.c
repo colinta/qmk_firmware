@@ -25,6 +25,9 @@ enum my_keycodes {
     // backlight toggle
     BKLT,
 
+    // sleep
+    SLEEP,
+
     // baby proofing
     LK_ANY,
     LK_2,
@@ -109,7 +112,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* FN LAYER - change layouts, media keys, function keys, reset
  * .--------------------------------------------------------------------------------------------------------------------------------------.
- * | KC_SLEP|        |   F1   |   F2   |   F3   |   F4   |   F5   |        |   F6   |   F7   |   F8   |   F9   |   F10  |   F11  |   F12  |
+ * |  SLEEP |        |   F1   |   F2   |   F3   |   F4   |   F5   |        |   F6   |   F7   |   F8   |   F9   |   F10  |   F11  |   F12  |
  * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+-----------------|
  * |        |        | QWERTY | MM_2   |        |        |        | RESET  | MM_1   |        |        |        |        |        |        |
  * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+-----------------+--------|
@@ -122,7 +125,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 
   [LAYER_FN] = KEYMAP(
-     KC_SLEP,   __   , KC_F1  , KC_F2  , KC_F3  , KC_F4  ,  KC_F5 ,   __   , KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 ,
+      SLEEP ,   __   , KC_F1  , KC_F2  , KC_F3  , KC_F4  ,  KC_F5 ,   __   , KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 ,
        __   ,   __   , GOTO_QW, MM_2   ,   __   ,   __   ,   __   , RESET  , MM_1   ,   __   ,   __   ,   __   ,   __   ,   __   ,   __   ,
        __   , KC_LSFT,   __   ,   __   , MM_5   , MM_4   , KC_MRWD, ENT_SET, KC_MFFD, MM_3   , MM_6   ,   __   ,   __   ,   __   ,   __   ,
        __   , KC_LCTL,   __   ,   __   , GOTO_CM,   __   , KC_VOLD, GOTO_FN, KC_VOLU,   __   ,   __   ,   __   ,   __   ,   __   , BKLT   ,
@@ -219,7 +222,11 @@ static bool reset = false;
 static uint8_t babycode = 0;
 
 /// BACKLIGHT
-static bool backlight_on = true;
+#define backlight_on (backlight_state && !is_sleeping)
+static bool backlight_state = true;
+
+/// SLEEPING (affects backlight)
+static bool is_sleeping = false;
 
 void matrix_init_user(void) {
     gp100_led_on();
@@ -383,7 +390,12 @@ bool process_record_user_reset(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_user_sleep(uint16_t keycode, keyrecord_t *record) {
-    if (keycode != KC_SLEP) { return KBD_CONTINUE; }
+    if (is_sleeping && record->event.pressed && keycode != GOTO_FN) {
+        is_sleeping = false;
+        keycaps_led_set(backlight_on);
+        return KBD_CONTINUE;
+    }
+    if (keycode != SLEEP) { return KBD_CONTINUE; }
     if (!record->event.pressed) { return KBD_HALT; }
 
     uint8_t ctrl_super = MOD_BIT(KC_LCTL) | MOD_BIT(KC_LGUI);
@@ -405,6 +417,9 @@ bool process_record_user_sleep(uint16_t keycode, keyrecord_t *record) {
     update_mods();
 
     layer_state_set(prev_layer_state);
+
+    is_sleeping = true;
+    keycaps_led_set(backlight_on);
 
     return KBD_HALT;
 }
