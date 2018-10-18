@@ -658,26 +658,41 @@ bool process_record_user_macro(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_user_babyproof(uint16_t keycode, keyrecord_t *record) {
-    if (!layer_state_is(LAYER_LOCK) || record->event.pressed) { return KBD_CONTINUE; }
+    if (!layer_state_is(LAYER_LOCK)) { return KBD_CONTINUE; }
 
     uint8_t new_baby_code = 0;
     switch (keycode) {
     case LK_1:
         new_baby_code = 1;
+        keycaps_led_set(record->event.pressed);
         break;
     case LK_2:
-        if (babycode == 1)  new_baby_code = 2;
+        if (babycode == 1) {
+            keycaps_led_set(record->event.pressed);
+            new_baby_code = 2;
+        }
         else new_baby_code = 0;
         break;
     case LK_3:
-        if (babycode == 2)  new_baby_code = 3;
+        if (babycode == 2) {
+            keycaps_led_set(record->event.pressed);
+            new_baby_code = 3;
+        }
         else new_baby_code = 0;
+        break;
+    default:
+        keycaps_led_set(false);
         break;
     }
 
-    if (new_baby_code == 3) {
+    if (!record->event.pressed) {
+        babycode = new_baby_code;
+    }
+
+    if (babycode == 3) {
         keycaps_led_set(backlight_on);
         layer_state_set(prev_layer_state);
+        babycode = 0;
     }
 #ifdef RGB_ENABLED
     else if (new_baby_code == 0 && babycode != 0) {
