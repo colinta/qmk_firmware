@@ -3,6 +3,9 @@
 #include <util/delay.h>
 #include "keymap.h"
 
+// change to #define RGB_ENABLED to enable fadeout
+#undef RGB_ENABLED
+
 enum my_keycodes {
     // sticky keys
     STK_CTL = SAFE_RANGE,
@@ -176,10 +179,12 @@ static taphold_t th_events[] = {
     { .is_pressed = false, .timer = 0, .kc_tap = KC_0, .kc_hold = KC_F10 } // TH_0
 };
 
+#ifdef RGB_ENABLED
 /// RGB KEYS
 /// Store an rgblight_fadeout for each LED; these are turned on and fade out after every key press
 static rgblight_fadeout lights[RGBLED_NUM];
 static bool rgb_animations = true;
+#endif
 
 /// STICKY KEYS
 // sticky key state - bit masks of MOD_BIT(KC_LCTL) | MOD_BIT(KC_LALT) | ...
@@ -216,9 +221,6 @@ static uint8_t babycode = 0;
 static bool backlight_on = true;
 
 void matrix_init_user(void) {
-    rgblight_mode(1);
-    rgblight_setrgb(0, 0, 0);
-    rgblight_enable();
     gp100_led_on();
     capslock_led_on();
     keycaps_led_on();
@@ -226,12 +228,21 @@ void matrix_init_user(void) {
     gp100_led_off();
     capslock_led_off();
 
+    rgb_init();
+}
+
+void rgb_init(void) {
+#ifdef RGB_ENABLED
+    rgblight_mode(1);
+    rgblight_enable();
+
     for (uint8_t light_index = 0 ; light_index < RGBLED_NUM ; ++light_index ) {
         rgblight_fadeout *light = &lights[light_index];
         light->enabled = false;
     }
 
     rgblight_setrgb(0, 0, 0);
+#endif
 }
 
 void matrix_scan_user(void) {
@@ -272,6 +283,7 @@ void scan_tap_hold(taphold_state state) {
 }
 
 void scan_rgblight_fadeout(void) {
+#ifdef RGB_ENABLED
     if (!(rgb_animations && backlight_on)) { return; }
 
     bool litup = false;
@@ -297,6 +309,7 @@ void scan_rgblight_fadeout(void) {
     if (litup) {
         rgblight_set();
     }
+#endif
 }
 
 void scan_sticky_auto_off(void) {
@@ -309,8 +322,8 @@ void scan_sticky_auto_off(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     bool result = KBD_CONTINUE;
 
-    result = process_record_user_rgb(keycode, record)         && result;
     result = process_record_user_sleep(keycode, record)       && result;
+    result = process_record_user_rgb(keycode, record)         && result;
     result = process_record_user_reset(keycode, record)       && result;
     result = process_record_user_goto_layer(keycode, record)  && result;
     result = process_record_user_fnlayer(keycode, record)     && result;
@@ -324,6 +337,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_user_rgb(uint16_t keycode, keyrecord_t *record) {
+#ifdef RGB_ENABLED
     if (!record->event.pressed) { return KBD_CONTINUE; }
 
     switch (keycode) {
@@ -337,6 +351,7 @@ bool process_record_user_rgb(uint16_t keycode, keyrecord_t *record) {
         start_rgb_light();
     }
 
+#endif
     return KBD_CONTINUE;
 }
 
@@ -352,7 +367,9 @@ bool process_record_user_reset(uint16_t keycode, keyrecord_t *record) {
             return KBD_HALT;
         }
 
+#ifdef RGB_ENABLED
         rgblight_setrgb(0xFF, 0xFF, 0);
+#endif
         gp103_led_on();
         if (keycode == ENT_SET) {
             register_code(KC_ENT);
@@ -441,7 +458,9 @@ bool process_record_user_fnlayer(uint16_t keycode, keyrecord_t *record) {
 
     if (keycode == GOTO_LK) {
         keycaps_led_off();
+#ifdef RGB_ENABLED
         rgblight_setrgb(0, 0, 0);
+#endif
         layer_move(LAYER_LOCK);
     }
     else if (layer_state_is(LAYER_COLEMAK) || layer_state_is(LAYER_QWERTY)) {
@@ -644,10 +663,11 @@ bool process_record_user_babyproof(uint16_t keycode, keyrecord_t *record) {
         keycaps_led_set(backlight_on);
         layer_state_set(prev_layer_state);
     }
+#ifdef RGB_ENABLED
     else if (new_baby_code == 0 && babycode != 0) {
         rgblight_setrgb(0, 0, 0);
     }
-    babycode = new_baby_code;
+#endif
 
     return KBD_HALT;
 }
@@ -655,13 +675,14 @@ bool process_record_user_babyproof(uint16_t keycode, keyrecord_t *record) {
 bool process_record_user_keycap_leds(uint16_t keycode, keyrecord_t *record) {
     if (keycode != BKLT || !record->event.pressed) { return KBD_CONTINUE; }
 
-    backlight_on = !backlight_on;
+    backlight_state = !backlight_state;
     keycaps_led_set(backlight_on);
 
     return KBD_HALT;
 }
 
 void start_rgb_light(void) {
+#ifdef RGB_ENABLED
     if (!(rgb_animations && backlight_on)) { return; }
 
     uint8_t indices[RGBLED_NUM];
@@ -701,6 +722,7 @@ void start_rgb_light(void) {
     light->b = rand() % 0xFF;
 
     rgblight_setrgb_at(light->r, light->g, light->b, light_index);
+#endif
 }
 
 void process_record_after(keyrecord_t *record) {
@@ -709,6 +731,7 @@ void process_record_after(keyrecord_t *record) {
 }
 
 void process_record_after_rgb(void) {
+#ifdef RGB_ENABLED
     if (layer_state_is(LAYER_LOCK)) {
         switch (babycode) {
         case 0:
@@ -732,6 +755,7 @@ void process_record_after_rgb(void) {
         rgb_animations = true;
         rgblight_setrgb(0, 0, 0);
     }
+#endif
 
     gp103_led_set(layer_state_is(LAYER_FN));
 }

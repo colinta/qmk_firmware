@@ -88,6 +88,7 @@ typedef struct {
     uint8_t life;
 } rgblight_fadeout;
 
+void rgb_init(void);
 void scan_tap_hold(taphold_state state);
 void scan_rgblight_fadeout(void);
 void scan_sticky_auto_off(void);
