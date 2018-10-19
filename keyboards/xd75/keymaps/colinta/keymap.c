@@ -229,12 +229,17 @@ static bool backlight_state = true;
 static bool is_sleeping = false;
 
 void matrix_init_user(void) {
+    gp103_led_on();
+    _delay_ms(100);
+    gp103_led_off();
     gp100_led_on();
-    capslock_led_on();
-    keycaps_led_on();
-    _delay_ms(250);
+    _delay_ms(100);
     gp100_led_off();
+    capslock_led_on();
+    _delay_ms(100);
     capslock_led_off();
+
+    keycaps_led_on();
 
     rgb_init();
 }
